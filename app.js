@@ -42,13 +42,13 @@ async function fileUpdate(userId, fileId) {
 };
 
 
-app.get('/upload', async (req, res) => {
+app.post('/upload', fileUpload({createParentPath : true}), async (req, res) => {
 
-    // const file = req.files;
+    const file = req.files;
     console.log(req);
     console.dir ( ip.address() );
 
-    res.status(200).send('ok');
+    res.json({'status' : 'ok'});
 
     // console.log(req.body['FirstName']);
     // res.json('req.body');
