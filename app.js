@@ -32,21 +32,13 @@ async function docConvert(fileUrl) {
 
 
 
-const storageConfig = multer.diskStorage({
-    destination: (req, file, cb) =>{
-        cb(null, "uploads");
-    },
-    filename: (req, file, cb) =>{
-        cb(null, file.originalname);
-    }
-});
- 
-app.use(express.static(__dirname));
+
  
 app.post("/upload",multer().single("filedata"), function (req, res, next) {
     
    
     let filedata = req.file;
+    console.log(filedata);
     if(!filedata)
         res.send("Ошибка при загрузке файла");
     else
