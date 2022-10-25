@@ -32,42 +32,57 @@ async function docConvert(fileUrl) {
 
 
 
-app.post('/upload1', upload.single('avatar'), function (req, res) {
-   console.log(req.file );
-   res.json({'status' : 'ok'});
-    // req.body сохранит текстовые поля, если они будут
-  })
-
-
-
-app.post('/upload', fileUpload({createParentPath : true}), async (req, res) => {
-
-    const file = req.files;
-    console.log(file);
-    console.dir ( ip.address() );
-
-    const resDownload = await docDownload(res11, '111', '222');
-    resDownload == 'oky' ? res.status(200).json({'status' : 'ok'}) : res.status(500).json({'status' : 'bad'});
-
-    res.json({'status' : 'ok'});
-
-    // console.log(req.body['FirstName']);
-    // res.json('req.body');
-    //     let fileUrl = req.query.fileurl;
-    //     let userID = req.query.userid;
-    //     let fileID = req.query.fileid
-
-ß
-    // const res11 = await docConvert('https://firebasestorage.googleapis.com/v0/b/fireprint-e7649.appspot.com/o/xenNlA24glaqqlms6OJ8VSLcoxx2%2Ffiles%2F%D1%81%D1%87%D0%B5%D1%82.xls?alt=media&token=265965c8-92b4-441b-b244-a480fedcbb46');
-    // if (res11 != 'error') {
-    //     const resDownload = await docDownload(res11, `${userID}`, `${fileID}`);
-    //     resDownload == 'oky' ? res.status(200).send('Download OK') : res.status(500).send('bad1');
-    // } else {
-    //     res.status(500).send('bad2');
-    // }
-    // console.log(res11);
-
+const storageConfig = multer.diskStorage({
+    destination: (req, file, cb) =>{
+        cb(null, "uploads");
+    },
+    filename: (req, file, cb) =>{
+        cb(null, file.originalname);
+    }
 });
+ 
+app.use(express.static(__dirname));
+ 
+app.use(multer({storage:storageConfig}).single("filedata"));
+app.post("/upload", function (req, res, next) {
+    
+   
+    let filedata = req.file;
+    if(!filedata)
+        res.send("Ошибка при загрузке файла");
+    else
+        res.send("Файл загружен");
+});
+
+
+// app.post('/upload', fileUpload({createParentPath : true}), async (req, res) => {
+
+//     const file = req.files;
+//     console.log(file);
+//     console.dir ( ip.address() );
+
+//     const resDownload = await docDownload(res11, '111', '222');
+//     resDownload == 'oky' ? res.status(200).json({'status' : 'ok'}) : res.status(500).json({'status' : 'bad'});
+
+//     res.json({'status' : 'ok'});
+
+//     // console.log(req.body['FirstName']);
+//     // res.json('req.body');
+//     //     let fileUrl = req.query.fileurl;
+//     //     let userID = req.query.userid;
+//     //     let fileID = req.query.fileid
+
+// ß
+//     // const res11 = await docConvert('https://firebasestorage.googleapis.com/v0/b/fireprint-e7649.appspot.com/o/xenNlA24glaqqlms6OJ8VSLcoxx2%2Ffiles%2F%D1%81%D1%87%D0%B5%D1%82.xls?alt=media&token=265965c8-92b4-441b-b244-a480fedcbb46');
+//     // if (res11 != 'error') {
+//     //     const resDownload = await docDownload(res11, `${userID}`, `${fileID}`);
+//     //     resDownload == 'oky' ? res.status(200).send('Download OK') : res.status(500).send('bad1');
+//     // } else {
+//     //     res.status(500).send('bad2');
+//     // }
+//     // console.log(res11);
+
+// });
 
 app.listen(PORT, (error) => {
     error ? console.log(error) : console.log(`listening port ${PORT}`);
