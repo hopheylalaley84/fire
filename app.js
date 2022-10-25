@@ -34,7 +34,7 @@ async function docConvert(fileUrl) {
 
 
  
-app.post("/upload",upload.single('avatar'), function (req, res) {
+app.post("/upload",upload.single('<NAME>'), function (req, res) {
     
    
     let filedata = req.file;
