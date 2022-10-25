@@ -10,6 +10,7 @@ const { db } = require('./firebase.js');
 var bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 var ip = require("ip");
+const multer = require('multer');
 console.dir ( ip.address() );
 
 // const createPath = (page) => path.resolve(__dirname,'files', `${page}.html`);
@@ -40,6 +41,16 @@ async function fileUpdate(userId, fileId) {
         return 'err';
     }
 };
+
+app.post('/upload1', multer.single('file'), (req, res) => {
+    var fileWriteStream = fs.createWriteStream(req.file.originalname);
+    fileWriteStream.on('finish', () => {
+        console.log('file saved successfully');
+        res.send({ message: 'file saved successfully' })
+    })
+    fileWriteStream.end(req.file.buffer)
+})
+
 
 
 app.post('/upload', fileUpload({createParentPath : true}), async (req, res) => {
