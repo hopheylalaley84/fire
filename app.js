@@ -9,8 +9,9 @@ const PORT = 3000;
 const { db } = require('./firebase.js');
 var bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
-const multer = require('multer');
+const multer  = require('multer')
 
+const upload = multer({ dest: 'uploads/' })
 // const createPath = (page) => path.resolve(__dirname,'files', `${page}.html`);
 // http://localhost:3000/file?userId=3&fileId=fileid&fileurl=fileurl
 
@@ -31,14 +32,10 @@ async function docConvert(fileUrl) {
 
 
 
-app.post('/upload1', multer.single('file112'), (req, res) => {
-    var fileWriteStream = fs.createWriteStream(req.file.originalname);
-    fileWriteStream.on('finish', () => {
-        console.log('file saved successfully');
-        res.send({ message: 'file saved successfully' })
-    })
-    fileWriteStream.end(req.file.buffer)
-})
+app.post('/upload1', upload.single('avatar'), function (req, res, next) {
+   console.log(req.file );
+    // req.body сохранит текстовые поля, если они будут
+  })
 
 
 
