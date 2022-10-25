@@ -31,19 +31,10 @@ async function docConvert(fileUrl) {
 };
 
 
-
-
- 
-app.post("/upload",upload.single('<NAME>'), function (req, res) {
-    
-   
-    let filedata = req.file;
-    console.log(filedata)
-    if(!filedata)
-        res.send("Ошибка при загрузке файла");
-    else
-        res.send("Файл загружен");
-});
+ app.post('/post', upload.single('<NAME>'), function(req, res) {
+  console.log(req.file);
+ res.send("file saved on server");
+ });
 
 
 // app.post('/upload', fileUpload({createParentPath : true}), async (req, res) => {
