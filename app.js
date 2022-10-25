@@ -34,11 +34,11 @@ async function docConvert(fileUrl) {
 
 
  
-app.post("/upload",multer().single("filedata"), function (req, res, next) {
+app.post("/upload",upload.single('avatar'), function (req, res) {
     
    
     let filedata = req.file;
-    console.log(filedata);
+    console.log(filedata)
     if(!filedata)
         res.send("Ошибка при загрузке файла");
     else
