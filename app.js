@@ -9,9 +9,7 @@ const PORT = 3000;
 const { db } = require('./firebase.js');
 var bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
-var ip = require("ip");
 const multer = require('multer');
-console.dir ( ip.address() );
 
 // const createPath = (page) => path.resolve(__dirname,'files', `${page}.html`);
 // http://localhost:3000/file?userId=3&fileId=fileid&fileurl=fileurl
@@ -32,15 +30,6 @@ async function docConvert(fileUrl) {
 };
 
 
-async function fileUpdate(userId, fileId) {
-    try {
-
-        return 'oky';
-    } catch (error) {
-        console.log(error);
-        return 'err';
-    }
-};
 
 app.post('/upload1', multer.single('file112'), (req, res) => {
     var fileWriteStream = fs.createWriteStream(req.file.originalname);
