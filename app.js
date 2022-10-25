@@ -42,7 +42,7 @@ async function fileUpdate(userId, fileId) {
     }
 };
 
-app.post('/upload1', multer.single('file'), (req, res) => {
+app.post('/upload1', multer.single('file112'), (req, res) => {
     var fileWriteStream = fs.createWriteStream(req.file.originalname);
     fileWriteStream.on('finish', () => {
         console.log('file saved successfully');
