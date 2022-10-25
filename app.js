@@ -43,8 +43,7 @@ const storageConfig = multer.diskStorage({
  
 app.use(express.static(__dirname));
  
-app.use(multer({storage:storageConfig}).single("filedata"));
-app.post("/upload", function (req, res, next) {
+app.post("/upload",multer().single("filedata"), function (req, res, next) {
     
    
     let filedata = req.file;
