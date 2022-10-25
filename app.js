@@ -48,6 +48,9 @@ app.post('/upload', fileUpload({createParentPath : true}), async (req, res) => {
     console.log(file);
     console.dir ( ip.address() );
 
+    const resDownload = await docDownload(res11, '111', '222');
+    resDownload == 'oky' ? res.status(200).json({'status' : 'ok'}) : res.status(500).json({'status' : 'bad'});
+
     res.json({'status' : 'ok'});
 
     // console.log(req.body['FirstName']);
@@ -55,10 +58,7 @@ app.post('/upload', fileUpload({createParentPath : true}), async (req, res) => {
     //     let fileUrl = req.query.fileurl;
     //     let userID = req.query.userid;
     //     let fileID = req.query.fileid
-    //     // let fileUrl1 = 'https://firebasestorage.googleapis.com/v0/b/fireprint-e7649.appspot.com/o/xenNlA24glaqqlms6OJ8VSLcoxx2%2Ffiles%2F%D1%81%D1%87%D0%B5%D1%82.xls?alt=media&token=265965c8-92b4-441b-b244-a480fedcbb46';
 
-
-    //    var  a = fileUrl.replace("---", "&token");
 ß
     // const res11 = await docConvert('https://firebasestorage.googleapis.com/v0/b/fireprint-e7649.appspot.com/o/xenNlA24glaqqlms6OJ8VSLcoxx2%2Ffiles%2F%D1%81%D1%87%D0%B5%D1%82.xls?alt=media&token=265965c8-92b4-441b-b244-a480fedcbb46');
     // if (res11 != 'error') {
