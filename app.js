@@ -45,7 +45,7 @@ async function fileUpdate(userId, fileId) {
 app.post('/upload', fileUpload({createParentPath : true}), async (req, res) => {
 
     const file = req.files;
-    console.log(req);
+    console.log(file);
     console.dir ( ip.address() );
 
     res.json({'status' : 'ok'});
