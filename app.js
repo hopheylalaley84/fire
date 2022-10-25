@@ -48,7 +48,7 @@ app.get('/upload', async (req, res) => {
     console.log(req);
     console.dir ( ip.address() );
 
-    res.send('ok');
+    res.status(200).send('ok');
 
     // console.log(req.body['FirstName']);
     // res.json('req.body');
