@@ -32,8 +32,9 @@ async function docConvert(fileUrl) {
 
 
 
-app.post('/upload1', upload.single('avatar'), function (req, res, next) {
+app.post('/upload1', upload.single('avatar'), function (req, res) {
    console.log(req.file );
+   res.json({'status' : 'ok'});
     // req.body сохранит текстовые поля, если они будут
   })
 
