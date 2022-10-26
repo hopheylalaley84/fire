@@ -20,6 +20,7 @@ app.listen(PORT, (error) => {
 });
 
 
+
 async function docConvert(fileUrl) {
     try {
         const fin2 = await a2pClient.libreOfficeAnyToPdf(`${fileUrl}`);
@@ -48,9 +49,8 @@ async function downloadFile(fileUrl, userId, fileId) {
         const fileUrlDone = url.pathToFileURL(resDownload['filePath']);
         const pdfPageNum = await pdf(fileUrl);        
        
-        console.log(`${__dirname}${fileUrlDone['pathname']}`);
         await db.collection('users').doc(userId).collection('files').doc(fileId).update({
-            "fileUrlPdf": `${__dirname}${fileUrlDone['pathname']}`,
+            "fileUrlPdf": fileUrlDone['href'],
             "filePagesCount": pdfPageNum['numpages'],
         });
         return 'ok';
