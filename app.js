@@ -49,7 +49,7 @@ async function downloadFile(fileUrl, userId, fileId) {
         const pdfPageNum = await pdf(fileUrl);        
        
         await db.collection('users').doc(userId).collection('files').doc(fileId).update({
-            "fileUrlPdf":  fileUrlDone['pathname'],
+            "fileUrlPdf":  fileUrlDone['href'],
             "filePagesCount": pdfPageNum['numpages'],
         });
         return 'ok';
