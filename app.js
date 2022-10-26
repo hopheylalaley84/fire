@@ -38,7 +38,7 @@ async function downloadFile(fileUrl, userId, fileId) {
         console.log(fileUrlDone);
         const pdfPageNum = await pdf(resDownload['filePath']);
         await db.collection('users').doc(userId).collection('files').doc(fileId).update({
-            "fileUrlPdf": fileUrlDone,
+            "fileUrlPdf": fileUrlDone.replace('file:///root', 'http://82.146.62.83:3000'),
             "filePagesCount": pdfPageNum['numpages'],
         });
         return 'ok';
