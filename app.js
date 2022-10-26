@@ -5,7 +5,7 @@ var Api2Pdf = require('api2pdf');
 var mkdirp = require('mkdirp');
 var a2pClient = new Api2Pdf('ed231e48-a5f1-4644-abe1-71e9f22e88dd');
 const PORT = 3000;
-const { db } = require('./firebase.js');
+const { db, storage } = require('./firebase.js');
 var bodyParser = require('body-parser');
 const Downloader = require("nodejs-file-downloader");
 const fs = require('fs');
@@ -13,19 +13,30 @@ const pdf = require('pdf-page-counter');
 var jsonParser = bodyParser.json();
 var url = require('url');
 
+
+
 app.listen(PORT, (error) => {
     error ? console.log(error) : console.log(`listening port ${PORT}`);
 });
 
+
 async function docConvert(fileUrl) {
     try {
         const fin2 = await a2pClient.libreOfficeAnyToPdf(`${fileUrl}`);
+        
+        // const pdfPageNum = await pdf(fin2['FileUrl']);
+        console.log(fin2['FileUrl']);
+        console.log(fin2['FileUrl'].split('/')[3]);
+        console.log(fin2['ResponseId']);
+        // console.log(pdfPageNum['numpages']);
+
         return fin2['Success'] == true ? fin2['FileUrl'] : 'error';
     } catch (error) {
         console.log(error);
         return 'error';
     }
 };
+
 
 async function downloadFile(fileUrl, userId, fileId) {
     const downloader = new Downloader({
@@ -34,11 +45,12 @@ async function downloadFile(fileUrl, userId, fileId) {
     });
     try {
         const resDownload = await downloader.download();
-        const fileUrlDone = url.pathToFileURL(resDownload['filePath']).href;
-        console.log(fileUrlDone);
-        const pdfPageNum = await pdf(resDownload['filePath']);
+        const fileUrlDone = url.pathToFileURL(resDownload['filePath']);
+        const pdfPageNum = await pdf(fileUrl);        
+       
+        console.log(`${__dirname}${fileUrlDone['pathname']}`);
         await db.collection('users').doc(userId).collection('files').doc(fileId).update({
-            "fileUrlPdf": fileUrlDone.replace('file:///root', 'http://82.146.62.83:3000'),
+            "fileUrlPdf": `${__dirname}${fileUrlDone['pathname']}`,
             "filePagesCount": pdfPageNum['numpages'],
         });
         return 'ok';
