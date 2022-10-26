@@ -4,25 +4,22 @@ const path = require('path');
 var Api2Pdf = require('api2pdf');
 var mkdirp = require('mkdirp');
 var a2pClient = new Api2Pdf('ed231e48-a5f1-4644-abe1-71e9f22e88dd');
-const download = require('download');
 const PORT = 3000;
 const { db } = require('./firebase.js');
 var bodyParser = require('body-parser');
-const fileUpload = require('express-fileupload');
-const multer  = require('multer')
-
-const upload = multer({ dest: 'uploads/' })
-// const createPath = (page) => path.resolve(__dirname,'files', `${page}.html`);
-// http://localhost:3000/file?userId=3&fileId=fileid&fileurl=fileurl
-
+const Downloader = require("nodejs-file-downloader");
+const fs = require('fs');
+const pdf = require('pdf-page-counter');
 var jsonParser = bodyParser.json();
+var url = require('url');
 
-
+app.listen(PORT, (error) => {
+    error ? console.log(error) : console.log(`listening port ${PORT}`);
+});
 
 async function docConvert(fileUrl) {
     try {
         const fin2 = await a2pClient.libreOfficeAnyToPdf(`${fileUrl}`);
-
         return fin2['Success'] == true ? fin2['FileUrl'] : 'error';
     } catch (error) {
         console.log(error);
@@ -30,42 +27,43 @@ async function docConvert(fileUrl) {
     }
 };
 
+async function downloadFile(fileUrl, userId, fileId) {
+    const downloader = new Downloader({
+        url: fileUrl,
+        directory: `./files/${userId}/${fileId}`,
+    });
+    try {
+        const resDownload = await downloader.download();
+        const fileUrlDone = url.pathToFileURL(resDownload['filePath']);
+        console.log(fileUrlDone);
+        const pdfPageNum = await pdf(resDownload['filePath']);
+        await db.collection('users').doc(userId).collection('files').doc(fileId).update({
+            "fileUrlPdf": fileUrlDone['href'],
+            "filePagesCount": pdfPageNum['numpages'],
+        });
+        return 'ok';
+    } catch (error) {
+        console.log(error);
+        return 'error';
+    }
+};
 
- app.post('/post', upload.single('<NAME>'), function(req, res) {
-  console.log(req.file);
- res.send("file saved on server");
- });
-
-
-// app.post('/upload', fileUpload({createParentPath : true}), async (req, res) => {
-
-//     const file = req.files;
-//     console.log(file);
-//     console.dir ( ip.address() );
-
-//     const resDownload = await docDownload(res11, '111', '222');
-//     resDownload == 'oky' ? res.status(200).json({'status' : 'ok'}) : res.status(500).json({'status' : 'bad'});
-
-//     res.json({'status' : 'ok'});
-
-//     // console.log(req.body['FirstName']);
-//     // res.json('req.body');
-//     //     let fileUrl = req.query.fileurl;
-//     //     let userID = req.query.userid;
-//     //     let fileID = req.query.fileid
-
-// ß
-//     // const res11 = await docConvert('https://firebasestorage.googleapis.com/v0/b/fireprint-e7649.appspot.com/o/xenNlA24glaqqlms6OJ8VSLcoxx2%2Ffiles%2F%D1%81%D1%87%D0%B5%D1%82.xls?alt=media&token=265965c8-92b4-441b-b244-a480fedcbb46');
-//     // if (res11 != 'error') {
-//     //     const resDownload = await docDownload(res11, `${userID}`, `${fileID}`);
-//     //     resDownload == 'oky' ? res.status(200).send('Download OK') : res.status(500).send('bad1');
-//     // } else {
-//     //     res.status(500).send('bad2');
-//     // }
-//     // console.log(res11);
-
-// });
-
-app.listen(PORT, (error) => {
-    error ? console.log(error) : console.log(`listening port ${PORT}`);
+app.post('/post', jsonParser, async function (req, res) {
+    const convertResult = await docConvert(req.body['url'])
+    if (convertResult == null) {
+        res.json({ "status": 'error' });
+    } else {
+        await mkdirp(`files/${req.body['userId']}/${req.body['fileId']}`).catch((e) => {
+            console.log(e);
+            return null;
+        });
+        const downloadRes = await downloadFile(convertResult, req.body['userId'], req.body['fileId'])
+        if (downloadRes != 'error') {
+            res.json({ "status": downloadRes });
+        } else {
+            res.json({ "status": 'error' });
+            return;
+        }
+    }
 });
+
