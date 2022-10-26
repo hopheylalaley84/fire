@@ -34,11 +34,11 @@ async function downloadFile(fileUrl, userId, fileId) {
     });
     try {
         const resDownload = await downloader.download();
-        const fileUrlDone = url.pathToFileURL(resDownload['filePath']);
+        const fileUrlDone = url.pathToFileURL(resDownload['filePath']).href;
         console.log(fileUrlDone);
         const pdfPageNum = await pdf(resDownload['filePath']);
         await db.collection('users').doc(userId).collection('files').doc(fileId).update({
-            "fileUrlPdf": fileUrlDone['href'],
+            "fileUrlPdf": fileUrlDone,
             "filePagesCount": pdfPageNum['numpages'],
         });
         return 'ok';
